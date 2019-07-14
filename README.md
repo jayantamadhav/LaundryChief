@@ -8,4 +8,5 @@ Django (latest)
 
 ## Usage ##
 >**pip install --upgrade virtualenv**    #always a good habit to use virtual environments
+
 >**python -m venv your-folder-name**     #replace your-folder-name
