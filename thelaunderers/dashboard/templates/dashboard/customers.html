@@ -1,0 +1,187 @@
+{% load static %}
+{% load widget_tweaks %}
+<!doctype html>
+<html lang="en">
+<head>
+    <title> Customers </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+
+
+    <!--CUSTOM CSS-->
+    <link rel = "stylesheet" href = "{% static 'css/dashboard.css' %}">
+    <link href = "{% static '/css/smart_cart.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
+    <script type="text/javascript"> 
+        $(window).on("load", function (e) { 
+            $(".pageloader").fadeOut("slow"); 
+        }); 
+    </script>
+</head>
+{% if user.is_authenticated %}
+<body>
+    <!--MAIN WRAPPER-->
+    <div class="wrapper">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <span style="padding: 5px"><img src="{% static 'assets/male.png' %}" style="width: 80px; height: 80px"></span>
+                <h3>{{ user.first_name }} {{user.last_name }}</h3>
+                <p>{{ user.email }} </p>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li><a href="{% url 'dashboard' %}">Orders</a></li>
+                <li class="active"><a href="{% url 'customers' %}">Customers</a></li>
+                <li><a href="{% url 'salesMetrics' %}">Sales Metrics</a></li>
+            </ul>
+            <ul class="list-unstyled sidebar-bottom" style="text-align: center;">
+                <li><a href="{% url 'logout' %}" >Log out</a></li>
+            </ul>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light p-0 mt-0">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="navbar-btn" style="float: left;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="navbar-brand-container">
+                        <h2 class="navbar-brand">Laundry Chief</h2>
+                    </div>
+                </div>
+            </nav>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h1><p>Customers</p></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" id="search" class="col-sm-4 form-control" style="float:right;width:50%;right:0" placeholder="Search by Name, Phone, Email, Address.."/>
+                    </div>
+                </div>
+                <div class="container-fluid" style="overflow-y:scroll;max-height: 500px">
+                    <table class="table" >
+                        <thead class="thead-dark" style="background-color: #444; color: white">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Orders</th>
+                            </tr>
+                        </thead>
+                        {% for customer in customerList %}
+                        <tbody>
+                            <tr>
+                                <th scope="row">{{ customer.id }}</th>
+                                <td id="name-data">{{ customer.cust_name }}</td>
+                                <td>{{ customer.cust_phone }}</td>
+                                <td>{{ customer.cust_email }}</td>
+                                <td>{{ customer.cust_address }}</td>
+                                <td><button type="button" id="orderHistoryButton" class="btn btn-info btn-lg" data-catid="{{customer.cust_name}}" data-toggle="modal" data-target="#myModal" style="font-size: 0.8em;padding:5px">Order History</button></td>
+                            </tr>
+                        </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Customer Order History</h4>
+                </div>
+                <div class=" container-fluid modal-body">
+                    <p class="order-history-modal"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+                $(this).toggleClass('active');
+            });
+            $("#search").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".table tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            $('.table > tbody > tr > td > #orderHistoryButton').click(function(){
+                var name;
+                name = $(this).attr("data-catid");
+                console.log(name);
+                $.ajax(
+                {
+                    type:"GET",
+                    async: "true",
+                    cache:"false",
+                    dataType: "text json",
+                    contentType: "application/json",
+                    url: "customers/getOrderHistory",
+                    data:{
+                       customer_name: name
+                   },
+                   success: function(data) {
+                    $('#myModal').hide();
+                    var dateSep = "";
+                    var renderedHtml = "";
+                    $.each(data,function(index,value){
+                        if(dateSep == value.ordered_at){
+                            eachHtml =value.item_name + '   x   ' + value.item_qty + '</br>';
+                        }
+                        else{
+                            eachHtml = '</br>' + value.ordered_at + '</br>' + value.item_name + '   x   ' + value.item_qty + '</br>';
+                            dateSep = value.ordered_at ; 
+                        }
+                        renderedHtml = renderedHtml + eachHtml;
+                    });
+                    $('.order-history-modal').html(renderedHtml);
+                    $('#myModal').show();
+                },
+                error: function(){
+                    alert("Nope");
+                }
+            })
+            });
+        });
+    </script>
+</body>
+{% else %}
+<body>
+    <div class="container-fluid">
+        <h1>Ooops. you need to log in first</h1><a href="{% url 'login' %}"<button class="btn btn-primary"></button>Login Here</a>
+    </div> 
+</body>
+{% endif %}
+</html>

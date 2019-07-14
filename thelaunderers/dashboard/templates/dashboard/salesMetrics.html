@@ -1,0 +1,178 @@
+
+{% load static %}
+{% load widget_tweaks %}
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Sales Metrics</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<!-- CDN -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+
+
+	<!--CUSTOM CSS-->
+	<link rel = "stylesheet" href = "{% static 'css/dashboard.css' %}">
+	<link rel = "stylesheet" href = "{% static 'css/salesMetrics.css' %}">
+
+	<!-- Font Awesome JS -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+
+</head>
+{% if user.is_authenticated %}
+<body>
+	<div class="wrapper">
+		<!-- Sidebar Holder -->
+		<nav id="sidebar">
+			<div class="sidebar-header">
+				<span style="padding: 5px"><img src="{% static 'assets/male.png' %}" style="width: 80px; height: 80px"></span>
+				<h3>{{ user.first_name }} {{user.last_name }}</h3>
+				<p>{{ user.email }} </p>
+			</div>
+
+			<ul class="list-unstyled components">
+				<li><a href="{% url 'dashboard' %}">Orders</a></li>
+				<li><a href="{% url 'customers' %}">Customers</a></li>
+				<li class="active"><a href="{% url 'salesMetrics' %}">Sales Metrics</a></li>
+			</ul>
+			<ul class="list-unstyled sidebar-bottom" style="text-align: center;">
+				<li><a href="{% url 'logout' %}" >Log out</a></li>
+			</ul>
+		</nav>
+
+		<!-- Page Content Holder -->
+		<div id="content">
+			<!--NAV BAR-->
+			<nav class="navbar navbar-expand-lg navbar-light bg-light p-0 mt-0">
+				<div class="container-fluid">
+
+					<button type="button" id="sidebarCollapse" class="navbar-btn" style="float: left;">
+						<span></span>
+						<span></span>
+						<span></span>
+					</button>
+					<div class="navbar-brand-container">
+						<a href="{% url 'dashboard' %}"><h2 class="navbar-brand">Laundry Chief</h2></a>
+					</div>
+				</div>
+			</nav>
+
+			<!--INFO BAR-->
+			<div class="container-fluid info-bar">
+				<div class="container-fluid row">
+					<div class="col-sm-4 container" style="border-right: 2px solid grey;height: 80%;margin-top:5px">
+						<h2>{{total_revenue}}</h2><h3><p>Total Revenue</p></h3>
+					</div>
+					<div class="col-sm-4 container" style="border-right: 2px solid grey;height: 80%;margin-top:5px">
+						<h2>{{today_revenue}}</h2><h3><p>Today's Revenue</p></h3>
+					</div>
+					<div class="col-sm-4 container">
+						<h2>{{todayOrders}}</h2><h3><p>Current Orders</p></h3>
+					</div>
+				</div>
+			</div>
+			<!--END INFO BAR-->
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-8">
+						<!--CHART-->
+						<div class="container-fluid chart-container">
+							<canvas id="myChart"></canvas>
+						</div>
+						<!--END CHART-->
+					</div>
+					<div class="col-sm-3">
+						<!--Doughnut-->
+						<div class="container-fluid doughnut-container">
+							<canvas id="myDoughnut" height="300px" width="300px"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>        
+				$(document).ready(function () {
+		            $('#sidebarCollapse').on('click', function () {
+		                $('#sidebar').toggleClass('active');
+		                $(this).toggleClass('active');
+		            });
+		 
+					var ctx = document.getElementById('myChart').getContext('2d');
+					var myChart = new Chart(ctx, {
+						type: 'line',
+						data: {
+							labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+							datasets: [{
+								label: 'No. of customers',
+								data: {{ cust_nos }},
+								backgroundColor: "rgba(113, 16, 188, 0.72)"
+							},{
+								label: 'Orders served',
+								data: {{ orders_served }},
+								backgroundColor: "rgba(0, 255, 0, 0.4)"
+							}]
+						}
+					});
+					var data = [{{processing}}, {{cleaned}}, {{paid}}];
+					var ctx2 = document.getElementById('myDoughnut').getContext('2d');
+					var myDoughnut = new Chart(ctx2, {
+						type : 'doughnut',
+						data : {
+							labels: ["Processing orders", "Cleaned orders", "Paid orders"],
+							datasets : [{
+								label: "Today's Orders",
+								data: data,
+								backgroundColor: [
+							        "#06004f",
+							        "#64009c",
+							        "#00aeb1",
+						    	],
+						    	borderColor: [
+						          	"#06004f",
+						          	"#64009c",
+						          	"#00aeb1",
+						        ],
+        						borderWidth: [1, 1, 1]
+							}]
+						},
+						options: {
+							responsive: true,
+							title: {
+					      		display: true,
+						      	position: "top",
+						      	text: "Today's Orders",
+						      	fontSize: 22,
+						      	fontColor: "#111"
+					    	},
+    						legend: {
+						      	display: true,
+						      	position: "bottom",
+						      	labels: {
+							        fontColor: "#333",
+							        fontSize: 16
+      							}
+    						}
+    					}
+					});
+				});
+
+			</script>
+</body>
+{% else %}
+<body>
+	<div class="container-fluid">
+		<h1>Ooops. you need to log in first</h1><a href="{% url 'login' %}"<button class="btn btn-primary"></button>Login Here</a>
+	</div> 
+</body>
+{% endif %}
+</html>

@@ -1,0 +1,62 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--BOOTSTRAP-->
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css"> 
+    
+    <!--CUSTOM CSS-->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header class="navbar container grid-xl">
+        <section class="navbar-section">
+            <div class="brand-container float-left" >
+                <a href="#" class="navbar-brand mr2"><h1 style="color: #B7B7B7">Laundry Chief</h1></a>
+            </div>
+        </section>
+        <section class="navbar-center" style="color: #44006a;">
+            <a href="..." class="btn btn-link" style="color: #44006a">Services</a>
+            <a href="..." class="btn btn-link" style="color: #44006a">Pricing</a>
+            <a href="..." class="btn btn-link" style="color: #44006a">About Us</a>
+        </section>
+        <section class="navbar-section">
+            <div class="input-inline">
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+                            Hi! {{ user.username  }} <i class="icon icon-caret"></i>
+                        </a>
+                    <!-- menu component -->
+                        <ul class="menu">
+                            <li><a href="{% url 'dashboard' %}" class="btn btn-link">Dashboard</a></li>
+                            <li><a href="{% url 'logout' %}" class="btn btn-link">logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}"><button class="btn btn-login" style="color: #44006a; border-color: #44006a">Login</button></a>
+                    <a href="{% url 'signup' %}"><button class="btn btn-primary" style="background-color: #44006a; border-color: #44006a">Signup</button></a>
+                {% endif %}
+            </div>
+        </section>
+    </header>
+    <div class="container-fluid">
+        <div class="d-flex flex-row info-1">
+            <div>
+                <img src="{% static 'img/ss1.png' %}" >
+            </div>
+            <div class="info-1-text">
+                <h2><pre>  Grow your Dry Cleaning 
+        and Laundry Business</pre></h2> 
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

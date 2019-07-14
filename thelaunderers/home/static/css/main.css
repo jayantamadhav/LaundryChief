@@ -1,0 +1,35 @@
+/* Theme:$44006a;*/
+body{
+	width: 100vw;
+	margin:auto;
+}
+a{
+	color: #44006a;
+}
+.navbar{
+	margin-top: 20px;
+}
+
+.brand-container{
+	display: block;
+	background-color: #44006a;
+	color: #3a3a3a;
+	border-radius: 10px;
+	padding-top: 10px;
+	padding-left: 20px;
+	left: 0px;
+	width: 300px;
+}
+.info-1{
+	margin-top:100px;
+	margin-left:100px;
+}
+.info-1 img{
+	width: 100%;
+	position: relative;
+	z-index: -99;
+}
+.info-1-text{
+	float: right;
+	margin-right: 50px;
+}
