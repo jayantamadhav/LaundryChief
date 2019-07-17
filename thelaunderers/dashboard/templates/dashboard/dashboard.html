@@ -88,7 +88,7 @@
                                     <div class="row">
                                         <!-- BEGIN PRODUCTS -->
                                         {% for item in items %}
-                                        <div class="col-md-3 col-sm-4">
+                                        <div class="col-md-2 col-sm-4">
                                             <div class="sc-product-item thumbnail">
                                                 <img class="sc-add-to-cart" data-name="product_image" src="{{ item.item_img_path }}" alt="...">
                                                 <div class="caption">
@@ -192,7 +192,7 @@
                                     <th scope="row" >{{ order.id }}</th>
                                     <td>{{ order.customer_name }}</td>
                                     <td>{{ order.status }}</td>
-                                    <td><button type="button" id="generateInvoice" class="btn btn-info btn-lg" data-catid="{{order.id}}" style="font-size: 0.8em;padding:5px">Invoice</button></td>
+                                    <td><a href="{% url 'generateInvoice' id=order.id %}"><button type="button" id="generateInvoice" class="btn btn-info btn-lg" style="font-size: 0.8em;padding:5px">Invoice</button></a></td>
                                 </tr>
                             </tbody>
                             {% endif %}
@@ -306,9 +306,6 @@
             if(activeTab){
                 $('#myTab a[href="' + activeTab + '"]').tab('show');
             }
-            $("#generateInvoice").click(function(){
-                alert("Invoice feature not added yet");
-            });
         });
     </script>
 
