@@ -80,11 +80,32 @@ def getData(request):																				#getting the submitted order
 		for i in data:
 			product_list.append(str(i['product_id'])+'-')
 			product_qty_list.append(str(i['product_quantity'])+'-')
-			total += int(i['product_price'])
-		CustomerItems.objects.create(customer_name = params["\"customer"], item_ids = "".join(product_list), item_qtys = "".join(product_qty_list))
+			total += int(i['product_price'])*int(i['product_quantity'])
+			print(int(i['product_price']), total)
+		CustomerItems.objects.create(customer_name = params["\"customer"], item_ids = "".join(product_list), item_qtys = "".join(product_qty_list), total = total)
 		
 		return HttpResponse( json.dumps({"status" : 1}), content_type="application/json")
 
+def generateInvoice(request, id):																	#generate invoices
+	order_id = id
+	order = CustomerItems.objects.get(id = order_id)
+	customer = Customer.objects.get(cust_name = order.customer_name)
+	today = date.today().strftime('%d %b,%Y')	
+	items = order.item_ids.split('-')
+	qtys = order.item_qtys.split('-')
+	item_list = {}
+	for item, qty in dict(zip(items[:-1], qtys[:-1])).items():
+		a = Items.objects.get(item_id = item)
+		key = str(a.item_name) + '   x   ' + str(qty)
+		item_list[key] = a.item_price * int(qty)
+	data = {
+	'order' : order,
+	'customer' : customer,
+	'today' : today,
+	'item_list' : item_list,
+	'qty' : qty
+	}
+	return render(request, 'dashboard/generateInvoice.html', data)
 
 def customers(request):																				#Customer page view
 	customerList = Customer.objects.all()
