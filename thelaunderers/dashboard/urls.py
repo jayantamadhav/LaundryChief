@@ -8,4 +8,5 @@ urlpatterns = [
     path('salesMetrics', views.salesMetrics, name="salesMetrics"),
     path('customers/getOrderHistory', views.getOrderHistory, name="getOrderHistory"),
     path('cartdata', views.getData, name='cartdata'),	
+    path('generateInvoice/<int:id>', views.generateInvoice, name="generateInvoice"),
 ]
