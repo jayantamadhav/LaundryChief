@@ -96,6 +96,15 @@
     .rtl table tr td:nth-child(2) {
         text-align: left;
     }
+    .brand{
+        display : block;
+        background-color: #44006a;
+        color: white;
+        text-align: center;
+        padding-top:1px;
+        padding-bottom: 1px;
+        border-radius: 15px;
+    }
     </style>
 </head>
 
@@ -107,13 +116,15 @@
                     <table>
                         <tr>
                             <td class="title">
-                                <img src="https://www.sparksuite.com/images/logo.png" style="width:100%; max-width:300px;">
+                                <div class="brand">
+                                    <p> Laundry Chief </p>
+                                </div>
                             </td>
                             
                             <td>
-                                Invoice #: 123<br>
-                                Created: January 1, 2015<br>
-                                Due: February 1, 2015
+                                Invoice #: {{ order.id }}<br>
+                                Created: {{ today }}<br>
+                                Ordered: {{ order.orderedAt}}
                             </td>
                         </tr>
                     </table>
@@ -123,17 +134,12 @@
             <tr class="information">
                 <td colspan="2">
                     <table>
-                        <tr>
+                        <tr>Customer Details - 
                             <td>
-                                Sparksuite, Inc.<br>
-                                12345 Sunny Road<br>
-                                Sunnyville, CA 12345
-                            </td>
-                            
-                            <td>
-                                Acme Corp.<br>
-                                John Doe<br>
-                                john@example.com
+                                Name : {{ customer.cust_name }}<br>
+                                Phone : {{ customer.cust_phone }}<br>
+                                Email : {{ customer.cust_email }}<br>
+                                Address : {{ customer.cust_address}}
                             </td>
                         </tr>
                     </table>
@@ -146,17 +152,7 @@
                 </td>
                 
                 <td>
-                    Check #
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                    Check
-                </td>
-                
-                <td>
-                    1000
+                    Cash
                 </td>
             </tr>
             
@@ -164,47 +160,28 @@
                 <td>
                     Item
                 </td>
-                
+
                 <td>
                     Price
                 </td>
             </tr>
-            
+            {% for item, price in item_list.items %}
             <tr class="item">
                 <td>
-                    Website design
+                    {{ item }}
                 </td>
                 
                 <td>
-                    $300.00
+                    {{ price }}
                 </td>
             </tr>
-            
-            <tr class="item">
-                <td>
-                    Hosting (3 months)
-                </td>
-                
-                <td>
-                    $75.00
-                </td>
-            </tr>
-            
-            <tr class="item last">
-                <td>
-                    Domain name (1 year)
-                </td>
-                
-                <td>
-                    $10.00
-                </td>
-            </tr>
+            {% endfor %}
             
             <tr class="total">
                 <td></td>
                 
                 <td>
-                   Total: $385.00
+                   Total: {{ order.total }}
                 </td>
             </tr>
         </table>
