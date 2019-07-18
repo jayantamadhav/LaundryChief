@@ -175,8 +175,15 @@
                         </table>
                     </div>
                     <div id="invoices" class="tab-pane fade">
-                        <h3>Order Processing</h3>
-                        <table class="table" >
+                        <div class="row inline">
+                            <div class="col-md-4">
+                                <h1><p>Invoices</p></h1>
+                            </div>
+                            <div class="col-md-8" style="margin-top:40px">
+                                <input type="text" id="search" class="col-sm-4 form-control" style="float:right;width:50%;right:0" placeholder="Search by Customer or Order No."/>
+                            </div>
+                        </div>
+                        <table class="table invoice-table" >
                             <thead class="thead-dark" style="background-color: #444; color: white">
                                 <tr>
                                     <th scope="col">#</th>
@@ -306,6 +313,12 @@
             if(activeTab){
                 $('#myTab a[href="' + activeTab + '"]').tab('show');
             }
+            $("#search").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".invoice-table tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
         });
     </script>
 
