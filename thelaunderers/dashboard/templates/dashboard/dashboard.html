@@ -90,7 +90,7 @@
                                         {% for item in items %}
                                         <div class="col-md-2 col-sm-4">
                                             <div class="sc-product-item thumbnail">
-                                                <img class="sc-add-to-cart" data-name="product_image" src="{{ item.item_img_path }}" alt="...">
+                                                <img class="sc-add-to-cart" data-name="product_image" src="{{ item.item_img_path }}" alt="..." data-toggle="tooltip" data-placement="bottom" title="{{ item.item_price }}">
                                                 <div class="caption">
                                                     <p data-name="product_name">{{ item.item_name }}</p>
                                                     <input name="product_quantity" min="1" value="{{ item.item_qty }}" type="hidden">
